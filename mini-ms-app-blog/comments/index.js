@@ -27,13 +27,13 @@ app.post("/posts/:id/comments", async (req, res) => {
   const { content } = req.body;
   //an array of comments for a specific post
   const comments = commentsByPostId[postId] || [];
-  comments.push({ id, content });
+  comments.push({ id, content, status: "pending" }); //default status: pending
   commentsByPostId[postId] = comments;
 
   //emmit to eventbus
   await axios.post("http://localhost:4005/events", {
     type: "CommentCreated",
-    data: { id, content, postId },
+    data: { id, content, postId, status: "pending" }, //this will go over to eventbus => query
   });
 
   res.status(201).send(comments);
