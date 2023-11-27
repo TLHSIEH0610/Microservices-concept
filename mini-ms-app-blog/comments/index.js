@@ -33,7 +33,7 @@ app.post("/posts/:id/comments", async (req, res) => {
   //emmit to eventbus
   await axios.post("http://localhost:4005/events", {
     type: "CommentCreated",
-    data: { id, title, postId },
+    data: { id, content, postId },
   });
 
   res.status(201).send(comments);
