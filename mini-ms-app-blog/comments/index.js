@@ -21,21 +21,25 @@ app.post("/events", async (req, res) => {
 
   //receive event from moderation service and update accordingly
   if (type === "CommentModerated") {
-    const { postId, id, status } = data;
+    const { postId, id, status, content } = data;
     const comments = commentsByPostId[postId];
     const comment = comments.find((c) => c.id === id);
     comment.status = status;
 
     //emmit CommentUpdated message to event-bus (and then to query service)
-    await axios.post("http://localhost:4005", {
-      type: "CommentUpdated",
-      data: {
-        id,
-        status,
-        postId,
-        content,
-      },
-    });
+    await axios
+      .post("http://localhost:4005/events", {
+        type: "CommentUpdated",
+        data: {
+          id,
+          status,
+          postId,
+          content,
+        },
+      })
+      .catch((err) => {
+        console.error(err.message);
+      });
   }
 
   res.send({});
@@ -52,10 +56,14 @@ app.post("/posts/:id/comments", async (req, res) => {
   commentsByPostId[postId] = comments;
 
   //emmit to eventbus
-  await axios.post("http://localhost:4005/events", {
-    type: "CommentCreated",
-    data: { id, content, postId, status: "pending" }, //this will go over to eventbus => query
-  });
+  await axios
+    .post("http://localhost:4005/events", {
+      type: "CommentCreated",
+      data: { id, content, postId, status: "pending" }, //this will go over to eventbus => query
+    })
+    .catch((err) => {
+      console.error(err.message);
+    });
 
   res.status(201).send(comments);
 });

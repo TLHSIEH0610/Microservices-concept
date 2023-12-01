@@ -11,17 +11,21 @@ app.post("/events", async (req, res) => {
   //Check content and update status
   if (type === "CommentCreated") {
     //update status based on content
-    const status = data.content.include("orange") ? "rejected" : "approved";
+    const status = data.content.includes("orange") ? "rejected" : "approved";
     //sent updated data back to event-bus
-    await axios.post("http://localhost:4005/events", {
-      type: "CommentModerated",
-      data: {
-        id: data.id,
-        postId: data.postId,
-        status,
-        content: data.content,
-      },
-    });
+    await axios
+      .post("http://localhost:4005/events", {
+        type: "CommentModerated",
+        data: {
+          id: data.id,
+          postId: data.postId,
+          status,
+          content: data.content,
+        },
+      })
+      .catch((err) => {
+        console.error(err.message);
+      });
   }
 
   res.send({});

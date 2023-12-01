@@ -24,6 +24,16 @@ app.post("/events", (req, res) => {
     const post = posts[postId];
     post.comments.push({ id, content, status });
   }
+  //receive from comment service(moderation => comment => query)
+  if (type === "CommentUpdated") {
+    const { id, content, postId, status } = data;
+    const post = posts[postId];
+
+    const comment = post.comments.find((comment) => comment.id === id);
+
+    comment.status = status;
+    comment.content = content;
+  }
   res.send({});
 });
 
