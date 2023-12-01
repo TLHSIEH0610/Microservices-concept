@@ -15,8 +15,29 @@ app.get("/posts/:id/comments", (req, res) => {
   res.send(commentsByPostId[req.params.id] || []);
 });
 
-app.post("/events", (req, res) => {
+app.post("/events", async (req, res) => {
   console.log("Event received", req.body.type);
+  const { type, data } = req.body;
+
+  //receive event from moderation service and update accordingly
+  if (type === "CommentModerated") {
+    const { postId, id, status } = data;
+    const comments = commentsByPostId[postId];
+    const comment = comments.find((c) => c.id === id);
+    comment.status = status;
+
+    //emmit CommentUpdated message to event-bus (and then to query service)
+    await axios.post("http://localhost:4005", {
+      type: "CommentUpdated",
+      data: {
+        id,
+        status,
+        postId,
+        content,
+      },
+    });
+  }
+
   res.send({});
 });
 
