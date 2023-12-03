@@ -1,0 +1,17 @@
+apiVersion: apps/v1
+kind: Deployment #type of object
+metadata:
+  name: posts-depl #when pod is created, give it a name
+spec:
+  replicas: 1 #number of pods we want to create
+  selector:
+    matchLabels:
+      app: posts # tell deployment to find a pod with a label of app: posts
+  template: # configuration that is going to apply the pod
+    metadata:
+      labels: # we want the pod to have a label of app: posts
+        app: posts
+    spec:
+      containers:
+        - name: posts #name for the container inside the pod
+          image: tlhsieh0610/posts:0.0.1
