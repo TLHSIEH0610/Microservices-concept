@@ -14,4 +14,18 @@ spec:
     spec:
       containers:
         - name: posts #name for the container inside the pod
-          image: tlhsieh0610/posts:0.0.1
+          image: tlhsieh0610/posts #default latest
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: posts-srv
+spec:
+  selector:
+    app: posts
+  ports:
+    - name: posts
+      protocol: TCP
+      port: 4000
+      targetPort: 4000

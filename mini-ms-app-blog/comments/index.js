@@ -28,7 +28,7 @@ app.post("/events", async (req, res) => {
 
     //emmit CommentUpdated message to event-bus (and then to query service)
     await axios
-      .post("http://localhost:4005/events", {
+      .post("http://event-bus-srv:4005/events", {
         type: "CommentUpdated",
         data: {
           id,
@@ -57,7 +57,7 @@ app.post("/posts/:id/comments", async (req, res) => {
 
   //emmit to eventbus
   await axios
-    .post("http://localhost:4005/events", {
+    .post("http://event-bus-srv:4005/events", {
       type: "CommentCreated",
       data: { id, content, postId, status: "pending" }, //this will go over to eventbus => query
     })
