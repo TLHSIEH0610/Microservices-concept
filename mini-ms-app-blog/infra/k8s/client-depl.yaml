@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment #type of object
+metadata:
+  name: client-depl #when pod is created, give it a name
+spec:
+  replicas: 1 #number of pods we want to create
+  selector:
+    matchLabels:
+      app: client # tell deployment to find a pod with a label of app: client
+  template: # configuration that is going to apply the pod
+    metadata:
+      labels: # we want the pod to have a label of app: client
+        app: client
+    spec:
+      containers:
+        - name: client #name for the container inside the pod
+          image: tlhsieh0610/client #default latest
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: client-srv
+spec:
+  selector:
+    app: client
+  ports:
+    - name: client
+      protocol: TCP
+      port: 3000
+      targetPort: 3000
