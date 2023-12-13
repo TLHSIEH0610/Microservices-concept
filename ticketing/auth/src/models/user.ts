@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { Password } from "../services/passwrod";
 
 //tell TS the User Attr
 interface UserAttr {
@@ -26,6 +27,14 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+});
+
+userSchema.pre("save", async function (done) {
+  if (this.isModified("password")) {
+    const hashed = await Password.toHash(this.get("password"));
+    this.set("password", hashed);
+  }
+  done();
 });
 
 //add "build" method to userSchema
