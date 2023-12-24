@@ -1,7 +1,7 @@
 import buildClient from "../api/build-client";
 
 const LadningPage = ({ currentUser }) => {
-  console.log({ currentUser });
+
   return currentUser ? <h1>You are sign in</h1> : <h1>You are Not sign in</h1>;
 };
 LadningPage.getInitialProps = async (context) => {
