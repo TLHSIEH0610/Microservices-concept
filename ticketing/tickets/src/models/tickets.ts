@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 interface TicketAttrs {
   title: string;
-  number: number;
+  price: number;
   userId: string;
 }
 
@@ -12,7 +12,7 @@ interface TicketModel extends mongoose.Model<TicketDoc> {
 
 interface TicketDoc extends mongoose.Document {
   title: string;
-  number: number;
+  price: number;
   userId: string;
 }
 
