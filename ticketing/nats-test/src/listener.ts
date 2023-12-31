@@ -1,5 +1,6 @@
-import nats from "node-nats-streaming";
+import nats, { Message, Stan } from "node-nats-streaming";
 import { randomBytes } from "crypto";
+import { TicketCreatedListener } from "./events/ticket-created-listener";
 
 //sec arg: a random client id
 const stan = nats.connect("ticketing", randomBytes(4).toString("hex"), {
@@ -14,26 +15,7 @@ stan.on("connect", () => {
     process.exit();
   });
 
-  const options = stan
-    .subscriptionOptions()
-    .setManualAckMode(true) //manual acknowledgement mode: msg.ack()
-    .setDeliverAllAvailable() //send all of the different events that was emitted over time when re-connect
-    .setDurableName("accounting-service"); //NATS going to record whether or not this subscription has received and successfully processed that event.
-
-  //sec arg: group
-  const sub = stan.subscribe(
-    "ticket:created",
-    "order-service-queue-group",
-    options
-  );
-
-  sub.on("message", (msg) => {
-    const data = msg.getData();
-    if (typeof data !== "string") console.log("message received", data);
-
-    //tell NATS the message and has been processed(for manual ack).
-    msg.ack();
-  });
+  new TicketCreatedListener(stan).listen();
 });
 
 //close down client when program is terminated
